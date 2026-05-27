@@ -95,14 +95,34 @@ Read the PRD and produce `docs/tdd-<name>-<date>.md` covering:
 - Test strategy (bun:test unit, Eden Treaty API tests, Playwright E2E)
 
 ### Phase 2: Initialize Project
-After TDD is approved, immediately scaffold the project:
-1. Copy the fullstack template: `cp -r <template-dir> <project-dir>`
-2. Update `package.json` name field only
-3. Run `bun install`
-4. Run `bunx drizzle-kit generate` to create migration files
-5. Start the server to verify it responds: `bun run src/index.ts`
 
-**Critical constraints for scaffolding:**
+A pre-built fullstack template is available at `~/.claude/agents/fullstack-template/`.
+Initialize the project by copying it — do NOT write files one by one.
+
+```bash
+# 1. Copy template
+cp -r ~/.claude/agents/fullstack-template/ <project-dir>
+
+# 2. Replace PROJECT_NAME placeholder in package.json files
+sed -i '' 's/PROJECT_NAME/<actual-project-name>/g' <project-dir>/package.json
+sed -i '' 's/PROJECT_NAME/<actual-project-name>/g' <project-dir>/apps/server/package.json
+sed -i '' 's/PROJECT_NAME/<actual-project-name>/g' <project-dir>/apps/web/package.json
+sed -i '' 's/PROJECT_NAME/<actual-project-name>/g' <project-dir>/apps/web/index.html
+
+# 3. Fill in schema.ts based on TDD database design
+# Edit apps/server/src/db/schema.ts — add the actual table definitions
+
+# 4. Install dependencies and generate migrations
+cd <project-dir> && bun install
+cd apps/server && bunx drizzle-kit generate
+
+# 5. Verify server starts
+bun run src/index.ts &
+sleep 2 && curl -s http://localhost:3000 && kill %1
+```
+
+**Critical constraints:**
 - Route handlers return empty/placeholder responses only — NO business logic
-- All business logic is implemented later by Backend Engineer and Frontend Engineer
-- Use Write tool for batch file creation, never output files line by line
+- Only schema.ts and App.tsx routes need to be filled in; everything else comes from the template
+- Backend Engineer fills in the actual API logic in Stage 6
+- Frontend Engineer fills in the actual pages in Stage 7

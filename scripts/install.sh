@@ -45,12 +45,25 @@ while IFS= read -r -d '' md; do
     fi
     count=$((count + 1))
   fi
-done < <(find "$REPO_DIR" -name "*.md" -not -path "*/.git/*" -not -name "README*" -print0)
+done < <(find "$REPO_DIR" -name "*.md" -not -path "*/.git/*" -not -name "README*" -not -path "*/fullstack-template/*" -print0)
+
+# Install fullstack template
+TEMPLATE_SRC="$REPO_DIR/engineering/fullstack-template"
+TEMPLATE_DST="$TARGET_DIR/fullstack-template"
+if [[ -d "$TEMPLATE_SRC" ]]; then
+  if $DRY_RUN; then
+    echo "  would install: engineering/fullstack-template/ → $TEMPLATE_DST/"
+  else
+    rm -rf "$TEMPLATE_DST"
+    cp -r "$TEMPLATE_SRC" "$TEMPLATE_DST"
+    echo "  ✓ engineering/fullstack-template/ → $TEMPLATE_DST/"
+  fi
+fi
 
 echo ""
 if $DRY_RUN; then
-  echo "✅ Dry run complete — $count agents would be installed"
+  echo "✅ Dry run complete — $count agents would be installed (+ fullstack-template)"
 else
-  echo "✅ Installed $count agents to $TARGET_DIR"
+  echo "✅ Installed $count agents + fullstack-template to $TARGET_DIR"
   echo "   Restart Claude Code or run /agents to see them."
 fi
