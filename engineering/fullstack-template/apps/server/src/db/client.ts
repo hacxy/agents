@@ -4,14 +4,15 @@ import { migrate } from 'drizzle-orm/bun-sqlite/migrator'
 import { join } from 'path'
 import * as schema from './schema'
 
-const sqlite = new Database(
-  process.env.DATABASE_URL ?? join(import.meta.dir, '../../../dev.db'),
-  { create: true }
-)
+// process.cwd() works in both source mode (bun run) and compiled binary mode.
+// import.meta.dir resolves to /$bunfs/root/... in compiled binaries.
+// Start server with cwd = apps/server/ so all relative paths resolve correctly.
+const dbPath = process.env.DATABASE_URL?.replace('file:', '') ?? join(process.cwd(), 'dev.db')
+const sqlite = new Database(dbPath, { create: true })
 
 export const db = drizzle(sqlite, { schema })
 
-const migrationsFolder = join(import.meta.dir, 'migrations')
+const migrationsFolder = join(process.cwd(), 'drizzle')
 try {
   migrate(db, { migrationsFolder })
 } catch (err) {

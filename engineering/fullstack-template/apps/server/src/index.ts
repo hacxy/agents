@@ -4,8 +4,6 @@ import { join } from 'path'
 
 // TODO: import route modules here
 
-const frontendDist = join(import.meta.dir, '../../web/dist')
-
 export const app = new Elysia()
   .use(cors({
     origin: process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost:5173'],
@@ -25,16 +23,6 @@ export const app = new Elysia()
   // TODO: mount route groups here, e.g.:
   // .group('/api', app => app.use(exampleRouter))
 
-  // Production static file serving (populated after bun run build)
-  .get('/assets/*', ({ params }) =>
-    Bun.file(join(frontendDist, 'assets', params['*'])))
-  .get('/', () => Bun.file(join(frontendDist, 'index.html')))
-  .get('/*', ({ request }) => {
-    const { pathname } = new URL(request.url)
-    if (/\.[a-zA-Z0-9]+$/.test(pathname))
-      return new Response('Not Found', { status: 404 })
-    return Bun.file(join(frontendDist, 'index.html'))
-  })
   .listen(process.env.PORT ? Number(process.env.PORT) : 3000)
 
 console.log(`Server running at http://localhost:${app.server?.port}`)
