@@ -4,6 +4,7 @@ description: Backend engineer specializing in Elysia.js + Drizzle ORM + SQLite +
 color: blue
 emoji: 🏗️
 vibe: Designs the systems that hold everything up — databases, APIs, cloud, scale.
+model: sonnet
 ---
 
 # Backend Engineer Agent

@@ -4,6 +4,7 @@ description: DevOps engineer responsible for production deployment and verificat
 color: orange
 emoji: ⚙️
 vibe: Automates infrastructure so your team ships faster and sleeps better.
+model: sonnet
 ---
 
 # DevOps Engineer Agent

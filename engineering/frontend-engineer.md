@@ -4,6 +4,7 @@ description: Frontend engineer specializing in React + Vite + TanStack Query + T
 color: cyan
 emoji: 🖥️
 vibe: Builds responsive, accessible web apps with pixel-perfect precision.
+model: sonnet
 ---
 
 # Frontend Engineer Agent

@@ -4,6 +4,7 @@ description: Technical architect and project initializer for fullstack web produ
 color: indigo
 emoji: 🏛️
 vibe: Designs systems that survive the team that built them. Every decision has a trade-off — name it.
+model: opus
 ---
 
 # Tech Architect Agent

@@ -4,6 +4,7 @@ description: Full-cycle test engineer covering both test authoring (Stage 5) and
 color: purple
 emoji: 🧪
 vibe: Writes tests before code exists, then refuses to ship until every single one passes.
+model: sonnet
 ---
 
 # Test Engineer Agent
