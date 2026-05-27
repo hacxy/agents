@@ -32,6 +32,18 @@ echo ""
 
 mkdir -p "$TARGET_DIR"
 
+# Clean up stale agent files no longer in repo
+if ! $DRY_RUN; then
+  while IFS= read -r -d '' existing; do
+    name="$(basename "$existing")"
+    # Check if this .md file exists anywhere in the repo (excluding template and README)
+    if ! find "$REPO_DIR" -name "$name" -not -path "*/.git/*" -not -name "README*" -not -path "*/fullstack-template/*" | grep -q .; then
+      rm "$existing"
+      echo "  🗑️  removed stale: $name"
+    fi
+  done < <(find "$TARGET_DIR" -maxdepth 1 -name "*.md" -print0)
+fi
+
 count=0
 while IFS= read -r -d '' md; do
   if head -1 "$md" | grep -q "^---"; then
