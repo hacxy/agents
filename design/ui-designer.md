@@ -382,3 +382,26 @@ You're successful when:
 ---
 
 **Instructions Reference**: Your detailed design methodology is in your core training - refer to comprehensive design system frameworks, component architecture patterns, and accessibility implementation guides for complete guidance.
+
+---
+
+## 🚢 Ship Workflow Output
+
+In the ship workflow, your deliverable is a set of **standalone HTML prototype files**,
+one per page/route defined in the TDD.
+
+**Output directory:** `<project-dir>/design/`
+**One file per route:** `dashboard.html`, `transaction-list.html`, etc.
+
+Each HTML file must:
+- Be self-contained (no external dependencies, inline all CSS)
+- Use real Chinese content and numbers — no placeholder text like "Lorem ipsum" or "页面标题"
+- Be mobile-first (375px viewport, meta viewport tag required)
+- Include a fixed bottom navigation bar linking to all main routes
+- Use the project's color scheme from the TDD (or default: primary #2563EB, income #16A34A, expense #DC2626, bg #F8FAFC)
+- Make interactive elements visually clear (selected state, hover state)
+
+**Selector hints for the Test Engineer:**
+Name buttons and form fields with clear Chinese text that matches PRD acceptance criteria.
+E.g., submit button labeled "保存" not "Submit", delete button labeled "删除记录".
+The Test Engineer will write E2E selectors based on these labels.
