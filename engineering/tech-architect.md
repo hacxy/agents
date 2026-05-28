@@ -88,11 +88,15 @@ You operate in two sequential phases within the ship workflow:
 ### Phase 1: Write TDD
 Read the PRD and produce `docs/tdd-<name>-<date>.md` covering:
 - Tech stack selection with rationale (default: React + Vite + Elysia.js + SQLite + Drizzle ORM + Bun)
+  - 前端 UI 组件库：**shadcn/ui**（已预装在模板中，Frontend Engineer 直接 `bunx shadcn@latest add <component>` 使用）
+  - 生产环境 URL 通过 `BASE_URL` 环境变量传递，**不使用 NODE_ENV**（Bun 编译时会固化 NODE_ENV 值）
 - Database schema (Drizzle ORM table definitions)
 - API design (every PRD user story must have a corresponding endpoint)
-- Frontend routes and page structure
-- Dev/prod connection strategy (Vite proxy in dev, static file serving in prod)
-- Test strategy (bun:test unit, Eden Treaty API tests, Playwright E2E)
+- 若项目包含 OAuth 或其他 `/非api/` 前缀路由，TDD 中必须明确标注，DevOps 阶段需在 nginx 配置中添加对应 location 块
+- Frontend routes and page structure（每个路由对应一个 design/*.html 原型）
+- Dev/prod connection strategy (Vite proxy in dev；生产用编译二进制 + nginx 反代)
+- 列出所有新增的环境变量（格式：变量名 + 用途 + 是否需要写入 deploy.yml）
+- Test strategy (bun:test unit + in-memory SQLite API tests + Playwright E2E)
 
 ### Phase 2: Initialize Project
 

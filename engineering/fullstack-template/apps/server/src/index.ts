@@ -1,6 +1,5 @@
 import { Elysia } from 'elysia'
 import { cors } from '@elysiajs/cors'
-import { join } from 'path'
 
 // TODO: import route modules here
 
@@ -20,6 +19,7 @@ export const app = new Elysia()
     set.status = 500
     return { error: '服务器内部错误', code: 'INTERNAL_ERROR' }
   })
+  .get('/', () => ({ status: 'ok' }))
   // TODO: mount route groups here, e.g.:
   // .group('/api', app => app.use(exampleRouter))
 

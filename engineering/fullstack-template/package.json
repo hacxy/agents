@@ -8,5 +8,8 @@
     "build": "bun run --cwd apps/web build",
     "test": "bun test tests/",
     "test:e2e": "bunx playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
   }
 }

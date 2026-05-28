@@ -7,6 +7,7 @@ import * as schema from './schema'
 // process.cwd() works in both source mode (bun run) and compiled binary mode.
 // import.meta.dir resolves to /$bunfs/root/... in compiled binaries.
 // Start server with cwd = apps/server/ so all relative paths resolve correctly.
+// 生产环境通过 BASE_URL 环境变量指定，不依赖 NODE_ENV（Bun 编译时会固化 NODE_ENV）
 const dbPath = process.env.DATABASE_URL?.replace('file:', '') ?? join(process.cwd(), 'dev.db')
 const sqlite = new Database(dbPath, { create: true })
 

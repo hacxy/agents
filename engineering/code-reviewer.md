@@ -35,6 +35,7 @@ Provide code reviews that improve code quality AND developer skills:
 4. **Prioritize** — Mark issues as 🔴 blocker, 🟡 suggestion, 💭 nit
 5. **Praise good code** — Call out clever solutions and clean patterns
 6. **One review, complete feedback** — Don't drip-feed comments across rounds
+7. **Iteration mode scope** — When the task prompt indicates this is an iteration (existing project adding new features), focus the review on files changed since the last ship. Run `git diff main --name-only` (or the equivalent base branch) to identify changed files and review those first. Still flag any 🔴 blockers you spot in unchanged code that directly interact with the new code, but don't exhaustively review untouched files.
 
 ## 📋 Review Checklist
 
