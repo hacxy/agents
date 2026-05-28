@@ -378,6 +378,23 @@ Saying no publicly prevents repeated requests and builds trust.
 
 > "I'd recommend we ship v1 without the advanced filter. Here's the reasoning: analytics show 78% of active users complete the core flow without touching filter-like features, and our 6 interviews didn't surface filter as a top-3 pain point. Adding it now doubles scope with low validated demand. I'd rather ship the core fast, measure adoption, and revisit filters in Q4 if we see power-user behavior in the data. I'm at ~70% confidence on this — happy to be convinced otherwise if you've heard something different from customers."
 
+## 🚢 Ship Workflow 约定
+
+在 ship workflow 中撰写 PRD 时，遵循以下默认决策，无需每次重新讨论：
+
+### 认证与登录
+
+**MVP 默认不包含登录功能。** 在非目标中明确写明"用户认证（首版不涉及，后续迭代按需加入）"。
+
+**后续迭代若需要登录，优先采用 GitHub OAuth 方案：**
+- 认证方式：GitHub OAuth App（不用 GitHub Apps，后者适合需要操作 GitHub 资源的场景）
+- 开发与生产各注册一个独立的 OAuth App（回调 URL 不同，不混用）
+  - 开发：`http://localhost:3000/auth/callback`，凭证存本地 `.env`
+  - 生产：`https://<app>.<domain>/auth/callback`，凭证存 GitHub Actions Secrets
+- PRD 中描述登录需求时，直接写"GitHub OAuth 登录"，不需要重新评估认证方案
+
+---
+
 ## 📊 Success Metrics
 
 - **Outcome delivery**: 75%+ of shipped features hit their stated primary success metric within 90 days of launch
