@@ -91,6 +91,35 @@ bash "$SKILL_DIR/scripts/deploy.sh" <project-dir> [app-name]
 - 参考 deploy skill 的"常见问题"章节排查
 - 查看服务器日志：`ssh deploy@<host> "journalctl -u <app>-server -f"`
 
+## 🔐 OAuth 项目部署规范
+
+项目包含 GitHub OAuth 或其他第三方认证时，以下配置是必须的，漏掉任何一项都会导致登录流程断开：
+
+### nginx 必须代理 `/auth/` 路由
+标准模板只有 `/api/` 的 proxy_pass，但 OAuth 的 `/auth/github`、`/auth/callback` 等路由也必须转发到后端，否则会被 React 前端接管，触发无限重定向：
+```nginx
+# 必须在 location /api/ 之前
+location /auth/ {
+    proxy_pass http://127.0.0.1:<port>;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+deploy skill 的 `nginx-app.conf.template` 已包含此配置，但检查旧项目时需手动核实。
+
+### GitHub Secrets 命名必须与代码中的环境变量名精确一致
+deploy.yml 里 `printf` 写 `.env` 时的变量名，必须与代码里 `process.env.XXX` 的名字完全一致。常见错误：Secrets 存的是 `OAUTH_CLIENT_ID`，代码读的是 `GITHUB_CLIENT_ID`，deploy.yml 做了映射但容易遗漏。**每次新增环境变量时，同步检查三处：代码 → deploy.yml 的 printf → GitHub Secrets。**
+
+### BASE_URL 必须写入生产 .env（不能依赖 NODE_ENV）
+Bun 编译二进制时会固化 `process.env.NODE_ENV` 的值，CI 环境通常未设置，导致运行时永远读到 `"development"`。OAuth callback 的 redirect_uri 必须通过独立的 `BASE_URL` 环境变量传递：
+```
+BASE_URL=https://myapp.example.com
+```
+在 deploy.yml 的 `printf` 里显式写入，不要通过 `NODE_ENV` 推导。
+
 ## 🚨 Critical Rules
 
 - 部署步骤通过 deploy skill 脚本执行，不手写重复的 bash 命令

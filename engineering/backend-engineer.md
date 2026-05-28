@@ -169,6 +169,78 @@ const app = new Elysia()
   .listen(3000);
 ```
 
+## 🔐 OAuth / 认证开发规范
+
+实现 GitHub OAuth 或类似认证功能时，必须遵守以下规则，均为踩坑后的经验：
+
+### Bun 编译二进制的 NODE_ENV 陷阱
+`bun build --compile` 会在**构建时固化** `process.env.NODE_ENV`，CI 环境通常未设置此变量，导致运行时无论怎么设置环境变量，`process.env.NODE_ENV` 在编译后的二进制中永远是 `"development"`。
+
+**不要这样写：**
+```ts
+const BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://myapp.example.com'
+  : 'http://localhost:3000'
+```
+
+**正确做法：使用独立的 `BASE_URL` 环境变量：**
+```ts
+const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000'
+```
+`BASE_URL` 由 deploy workflow 写入服务器 `.env`，不受 Bun 编译行为影响。同理，任何需要区分生产/开发环境的运行时逻辑，都应用独立 env var，不依赖 `NODE_ENV`。
+
+### 必要的启动守卫
+关键密钥缺失时服务器应立即崩溃，而不是用占位值启动：
+```ts
+// index.ts 顶部，import 之后，Elysia 实例之前
+if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is required')
+if (!process.env.GITHUB_CLIENT_ID) throw new Error('GITHUB_CLIENT_ID is required')
+```
+
+### OAuth Cookie 安全标志
+`oauth_state` cookie（CSRF 防护）必须与 `session` cookie 使用相同的安全标志：
+```ts
+// 两个 cookie 必须保持一致，不能只设置 session 而漏掉 oauth_state
+cookie.oauth_state.set({ ..., httpOnly: true, sameSite: 'lax', secure: process.env.SECURE_COOKIES === 'true' })
+cookie.session.set({ ..., httpOnly: true, sameSite: 'lax', secure: process.env.SECURE_COOKIES === 'true' })
+```
+注意：Secure 标志也不要依赖 `NODE_ENV`，改用 `SECURE_COOKIES=true` 环境变量。
+
+### GitHub API 响应必须检查 HTTP 状态
+```ts
+const userRes = await fetch('https://api.github.com/user', { headers: { Authorization: `Bearer ${token}` } })
+// 必须检查，否则 rate limit / 无效 token 会产生含 undefined 字段的 JWT
+if (!userRes.ok || !ghUser.id) {
+  set.status = 302
+  set.headers['location'] = '/login?error=oauth_failed'
+  return null
+}
+```
+
+### GitHub 用户 name 字段可能为 null
+```ts
+// GitHub 不强制用户设置 display name，name 字段可能为 null
+name: ghUser.name ?? ghUser.login  // 用 login 兜底，不要直接用 name
+```
+
+### 测试环境的 JWT_SECRET 注入时机
+`@elysiajs/jwt` 在**插件初始化时**立即校验 secret，而 ES module import 是静态提升的，比任何模块内代码都先执行。所以在测试 helper 里用 `process.env.JWT_SECRET ??= 'test'` 永远来不及。
+
+**正确方案：使用 `bunfig.toml` preload：**
+```toml
+# bunfig.toml
+[test]
+preload = ["./tests/preload.ts"]
+```
+```ts
+// tests/preload.ts — 在所有 import 之前执行
+process.env.JWT_SECRET ??= 'test-secret-dev'
+process.env.GITHUB_CLIENT_ID ??= 'test-client-id'
+process.env.GITHUB_CLIENT_SECRET ??= 'test-client-secret'
+```
+
+---
+
 ## 💭 Your Communication Style
 
 - **Be concrete**: "Implemented `POST /orders` with `t.Object` validation and Drizzle insert returning the created row"
