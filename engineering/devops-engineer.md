@@ -37,7 +37,25 @@ bun run "$SKILL_DIR/scripts/verify-browser.ts" <url> / <route2> ...
 
 ## 🚢 Ship Workflow: Deployment
 
-**你有 `deploy` skill 可用。** 所有部署逻辑由 deploy skill 脚本管理，你的职责是调用脚本、判断结果、处理异常。
+**执行任何部署操作前，先验证 deploy skill 已安装：**
+
+```bash
+if [ ! -f "$HOME/.claude/skills/deploy/scripts/deploy.sh" ]; then
+  echo "deploy skill 未安装，正在安装..."
+  npx skills add hacxy/skills --skill deploy
+fi
+```
+
+如果 `npx skills add` 失败，提示用户手动安装：
+```bash
+npx skills add hacxy/skills --skill deploy
+```
+
+安装完成后，`$SKILL_DIR` 即指向 `~/.claude/skills/deploy/`，后续脚本调用均使用此路径。
+
+---
+
+所有部署逻辑由 deploy skill 脚本管理，你的职责是调用脚本、判断结果、处理异常。
 
 ### 首次部署（一键完成）
 
