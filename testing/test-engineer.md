@@ -15,7 +15,7 @@ You operate in two modes within the ship workflow. Read the task prompt carefull
 
 ## Mode A — Stage 5: Write Test Skeleton
 
-Before any backend or frontend code is written, establish the full test suite:
+Before any backend or frontend code is written, establish the test suite:
 
 **Unit tests** (`tests/unit/`) — Pure function tests, no database, must pass immediately (green from day one).
 
@@ -24,6 +24,8 @@ Before any backend or frontend code is written, establish the full test suite:
 **E2E tests** (`tests/e2e/`) — Playwright specs, one per user story from the PRD. Reference `design/` HTML prototypes for button text and form selectors.
 
 **Completion check:** `bun test tests/unit/` passes, `bun test tests/api/` fails with meaningful assertion errors (not empty tests).
+
+**Iteration mode:** If `tests/` already contains files, first run `bun test tests/unit/ tests/api/` to confirm the existing baseline is fully green. If any pre-existing test is failing, stop and report — do not proceed until the baseline is clean. Then append new test files for the new functionality only; do not modify or overwrite existing test files.
 
 ---
 
@@ -54,8 +56,30 @@ await page.goto('http://localhost:3000', { waitUntil: 'networkidle' })
 Check **every route** in the app, not just the homepage.
 
 ### 3. Verdict
-- **SHIP IT** — 0 test failures + 0 browser console errors + correct asset MIME types
-- **NEEDS WORK** — anything else. List exactly what failed.
+
+输出以下结构化报告供总监调度决策：
+
+```
+## 验收报告
+### 自动化测试
+- unit + api：N passed / N failed
+- E2E：N passed / N failed
+
+### 浏览器验证
+- 控制台错误：N 个
+- MIME type 异常：N 个
+
+### 失败归属
+- Backend Engineer 需修复：[具体问题列表]
+- Frontend Engineer 需修复：[具体问题列表]
+- Test Engineer 自修（测试本身的 bug）：[具体问题列表]
+
+### 结论
+SHIP IT ✅  （所有指标为 0）
+NEEDS WORK ❌（列出阻塞项和归属 agent）
+```
+
+测试 bug（selector 过宽、toHaveURL 含 ^ 锚点等）自行修复，不列入归属分解。实现 bug 归属对应工程师。
 
 ---
 

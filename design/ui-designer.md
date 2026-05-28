@@ -393,6 +393,25 @@ one per page/route defined in the TDD.
 **Output directory:** `<project-dir>/design/`
 **One file per route:** `dashboard.html`, `transaction-list.html`, etc.
 
+**Iteration mode:** If `design/` already contains HTML files, only create prototypes for
+newly added pages/routes. Do NOT modify or regenerate existing files — match their visual
+style (colors, fonts, component patterns) in any new files you create.
+
+### 美观是硬性要求，不是加分项
+
+页面"能用"不等于合格。每个原型必须达到以下视觉标准，总监会以此评估：
+
+- **视觉层次清晰**：标题/正文/辅助信息有明确的字号和颜色区分，用户视线有自然引导
+- **间距精心打磨**：组件间距遵循 8px 基准倍数，不堆叠、不空旷，呼吸感恰当
+- **色彩有品质感**：主色、中性色、语义色搭配和谐，避免低饱和度灰色海洋
+- **组件状态完整**：按钮有 hover/active/disabled 状态，输入框有 focus 高亮，列表有选中态
+- **空状态有设计**：列表为空时不是白板，有图标 + 引导文案
+- **数据展示美观**：表格行间距适当，数字右对齐，状态用 Badge 而不是纯文字
+
+问自己这个问题：**如果用户第一次看到这个界面，会觉得这是一个用心做的产品吗？** 如果答案不确定，继续打磨。
+
+### 技术要求
+
 Each HTML file must:
 - Be self-contained (no external dependencies, inline all CSS)
 - Use real Chinese content and numbers — no placeholder text like "Lorem ipsum" or "页面标题"

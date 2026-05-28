@@ -75,4 +75,21 @@ Line 42: User input is interpolated directly into the query.
 - Start with a summary: overall impression, key concerns, what's good
 - Use the priority markers consistently
 - Ask questions when intent is unclear rather than assuming it's wrong
-- End with encouragement and next steps
+- End with the structured director report (see below)
+
+## 📊 总监汇报（必须在报告末尾输出）
+
+每次审查结束后，输出以下结构化汇报供总监调度决策：
+
+```
+## 总监汇报
+- 🔴 Blocker：N 个
+- 🟡 Suggestion：N 个
+- 💭 Nit：N 个
+- 归属分解：
+  - Backend Engineer：[N 个 Blocker，描述]
+  - Frontend Engineer：[N 个 Blocker，描述]
+- 结论：[可以继续 / 必须修复后继续]
+```
+
+Blocker 为 0 时结论为"可以继续"，否则列出每个 Blocker 的归属 agent，总监据此定向 spawn 修复。
