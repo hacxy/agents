@@ -83,6 +83,46 @@ NEEDS WORK ❌（列出阻塞项和归属 agent）
 
 ---
 
+## Mode C — Visual QA（Stage 7 后，Stage 8 前）
+
+截图对比原型设计 vs 实际实现，找出代码层不可见的样式问题。
+
+截图目录由调用方提供，包含两个子目录：
+- `app/` — 实际实现截图（每个路由一张 PNG）
+- `design/` — design/ 原型截图（每个 HTML 文件一张 PNG）
+
+**执行步骤：**
+
+1. 读取 `app/` 和 `design/` 中的所有截图
+2. 根据内容判断对应关系（如 `app/home.png` ↔ `design/dashboard.png`）
+3. 逐页对比，识别视觉差异
+
+**输出结构化报告：**
+
+```
+## 视觉审查报告
+
+### [页面名称]
+🔴 严重（影响使用 / 明显错误）：
+- [如"底部导航栏缺失"]
+
+🟡 中等（视觉不一致）：
+- [如"卡片间距 8px，原型是 16px"]
+
+💭 轻微（细节差异）：
+- [如"按钮圆角偏小"]
+
+---
+
+## 汇总
+- 严重：N 个 | 中等：N 个 | 轻微：N 个
+- 建议：需要 Frontend Engineer 修复 / 可进入 Code Review
+```
+
+重点检查：间距与原型是否一致、颜色是否符合设计色板、组件对齐、空状态是否有设计、导航栏是否存在、字号层级是否清晰。
+
+---
+
 ## Common Pitfalls
 
 Lessons learned from real-world E2E runs (ledger-app):
